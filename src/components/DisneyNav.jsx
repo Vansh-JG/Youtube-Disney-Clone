@@ -1,6 +1,15 @@
 import styled from "styled-components";
+import { auth, provider } from "../firebase"
 
 const DisneyNav = (props) => {
+
+    const handleAuth = () => {
+        auth.signInWithPopup(provider).then((result) => {
+            console.log(result);
+        }).catch((error) => {
+            alert(error.message)
+        })
+    }
     return (
     <Nav>
         <DisneyLogo>
@@ -28,7 +37,7 @@ const DisneyNav = (props) => {
                 <span>MOVIES</span>
             </a>
         </NavMenu>
-        <LoginButton>Login</LoginButton>
+        <LoginButton onClick={handleAuth}>Login</LoginButton>
     </Nav>
     )
 };
