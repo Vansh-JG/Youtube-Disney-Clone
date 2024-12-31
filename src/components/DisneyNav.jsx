@@ -1,45 +1,72 @@
 import styled from "styled-components";
-import { auth, provider } from "../firebase"
+import { useDispatch, useSelector } from "react-redux";
+import { auth, provider } from "../firebase";
+// import { useNavigate } from 'react-router-dom';
+import { selectUserName, selectUserPhoto, setUserLoginDetails } from "../features/user/userSlice";
+// import Login from "./Login";
 
 const DisneyNav = (props) => {
 
+    const dispatch = useDispatch();
+    // const navigate = useNavigate();
+    const userName = useSelector(selectUserName);
+    const userPhoto = useSelector(selectUserPhoto);
+
     const handleAuth = () => {
         auth.signInWithPopup(provider).then((result) => {
-            console.log(result);
+            setUser(result.user);
         }).catch((error) => {
             alert(error.message)
-        })
+        });
+    };
+
+    const setUser = (user) => {
+        dispatch(
+            setUserLoginDetails({
+                name: user.displayName,
+                email: user.email,
+                photo: user.photoURL,
+                
+    })
+        )
     }
+
     return (
     <Nav>
         <DisneyLogo>
             <img src = "/images/logo.svg" alt="Disney-Logo" />
         </DisneyLogo>
-        <NavMenu>
-            <a href="/home">
-                <img src="/images/home-icon.svg" alt="HOME" />
-                <span>HOME</span>
-            </a>
-            <a href="/search">
-                <img src="/images/search-icon.svg" alt="SEARCH" />
-                <span>SEARCH</span>
-            </a>
-            <a href="/watchlist">
-                <img src="/images/watchlist-icon.svg" alt="WATCHLIST" />
-                <span>WATCHLIST</span>
-            </a>
-            <a href="/originals"> 
-                <img src="/images/original-icon.svg" alt="ORIGINALS" />
-                <span>ORIGINALS</span>
-            </a>
-            <a href="/movies">
-                <img src="/images/movie-icon.svg" alt="MOVIES" />
-                <span>MOVIES</span>
-            </a>
-        </NavMenu>
-        <LoginButton onClick={handleAuth}>Login</LoginButton>
+            {!userName ? (
+                    <LoginButton onClick={handleAuth}>Login</LoginButton>
+                ) : (
+                    <>
+                    <NavMenu>
+                        <a href="/home">
+                            <img src="/images/home-icon.svg" alt="HOME" />
+                            <span>HOME</span>
+                        </a>
+                        <a href="/search">
+                            <img src="/images/search-icon.svg" alt="SEARCH" />
+                            <span>SEARCH</span>
+                        </a>
+                        <a href="/watchlist">
+                            <img src="/images/watchlist-icon.svg" alt="WATCHLIST" />
+                            <span>WATCHLIST</span>
+                        </a>
+                        <a href="/originals"> 
+                            <img src="/images/original-icon.svg" alt="ORIGINALS" />
+                            <span>ORIGINALS</span>
+                        </a>
+                        <a href="/movies">
+                            <img src="/images/movie-icon.svg" alt="MOVIES" />
+                            <span>MOVIES</span>
+                        </a>
+                    </NavMenu>
+                    <UserImg src={userPhoto} alt={userName} />
+                    </>
+            )}
     </Nav>
-    )
+  );
 };
 
 const Nav = styled.nav`
@@ -109,7 +136,8 @@ const NavMenu = styled.div`
     
 
     &:before {
-        background-color: #27a8fd;
+        background-color: #0bb62d;
+        /* background-color: #27a8fd; */
         border-radius: 0px 0px 4px 4px;
         bottom: -6px;
         content: "";
@@ -154,5 +182,10 @@ const LoginButton = styled.a`
     }
 `;
 
+
+const UserImg = styled.img`
+    height: 100%;
+    
+`;
 
 export default DisneyNav;
